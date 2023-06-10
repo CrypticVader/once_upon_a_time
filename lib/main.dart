@@ -3,9 +3,15 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:once_upon_a_time/services/firestore_service.dart';
+import 'package:once_upon_a_time/services/preference_service.dart';
+import 'package:once_upon_a_time/views/user_avatar_picker.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  AppPreferenceService().initPrefs();
+  FirestoreService().initialize();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
@@ -63,6 +69,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late final TextEditingController _userIdTextController;
+
+  @override
+  void initState() {
+    _userIdTextController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _userIdTextController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 8,
                 ),
                 TextField(
+                  controller: _userIdTextController,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.all(16),
                     focusedBorder: OutlineInputBorder(
@@ -148,7 +169,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 8,
                 ),
                 FilledButton.icon(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final userId = _userIdTextController.text;
+                    if (userId.isEmpty) {
+                      return;
+                    } else {
+                      await AppPreferenceService().setUserId(userId: userId);
+                    }
+                    await FirestoreService().initCourseDoc();
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const UserAvatarPicker();
+                        },
+                      ),
+                      ModalRoute.withName('/'),
+                    );
+                  },
                   label: const Text(
                     'Start your journey',
                     style: TextStyle(

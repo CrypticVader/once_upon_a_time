@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.2 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,6 +35,11 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  firebase: ^9.0.3
+  cloud_firestore: ^4.8.0
+  firebase_auth: ^4.6.2
+  firebase_core: ^2.13.1
+  shared_preferences: ^2.1.2
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +69,18 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/home_bg.png
+    - assets/images/boy.png
+    - assets/images/boy_alt.png
+    - assets/images/girl.png
+    - assets/images/girl_alt.png
+    - assets/images/maths.jpeg
+    - assets/images/programming.jpeg
+    - assets/images/science.jpeg
+    - assets/images/language.jpeg
+    - assets/images/space.jpeg
+    - assets/images/underwater.jpeg
+    - assets/images/scifi.jpeg
+    - assets/images/fantasy.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

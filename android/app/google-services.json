@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "422302213096",
+    "project_id": "once-upon-a-time-app",
+    "storage_bucket": "once-upon-a-time-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422302213096:android:e1b0c7d7c1d64416de3a5d",
+        "android_client_info": {
+          "package_name": "com.nullpoint.onceuponatime.once_upon_a_time"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "422302213096-f7c1cil5h4qm7iigm5c5hfl53cbjfh8i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQeekPzmg9hHxxjNtVqWkjvV_eXXUEMEk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "422302213096-f7c1cil5h4qm7iigm5c5hfl53cbjfh8i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
