@@ -28,7 +28,9 @@ class _CoursePickerViewState extends State<CoursePickerView> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return StoryThemePickerView(selectedCourse: courseName,);
+          return StoryThemePickerView(
+            selectedCourse: courseName,
+          );
         },
       ),
     );
@@ -38,25 +40,44 @@ class _CoursePickerViewState extends State<CoursePickerView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lets pick a course'),
+        title: const Text(
+          'Lets pick a course',
+          style: TextStyle(
+            fontVariations: <FontVariation>[FontVariation('wght', 400)],
+          ),
+        ),
       ),
       body: ListView.separated(
         itemCount: 4,
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
+            contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             onTap: () => onSelectCourse(courseName: courseNameList[index]),
             tileColor: Theme.of(context).colorScheme.surfaceVariant,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32),
             ),
-            title: Image.asset(courseArtList[index]),
-            subtitle: Text(
-              courseNameList[index],
-              style: const TextStyle(
-                fontSize: 32,
-                fontVariations: <FontVariation>[FontVariation('wght', 700)],
+            title: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: Image.asset(
+                courseArtList[index],
               ),
+            ),
+            subtitle: Column(
+              children: [
+                const SizedBox(
+                  height: 12.0,
+                ),
+                Text(
+                  courseNameList[index],
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontVariations: <FontVariation>[FontVariation('wght', 700)],
+                  ),
+                ),
+              ],
             ),
           );
         },

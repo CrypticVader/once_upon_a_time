@@ -29,6 +29,11 @@ class AppPreferenceService {
     return value;
   }
 
+  bool get userNull {
+    final value = _prefs.get('userId');
+    return value == null ? true : false;
+  }
+
   Future<void> setUserAvatar({required String assetName}) async {
     final couldSet = await _prefs.setString('userAvatar', assetName);
     if (!couldSet) {

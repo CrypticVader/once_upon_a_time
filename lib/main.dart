@@ -23,8 +23,19 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    AppPreferenceService().initPrefs();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +65,14 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key});
 
-  final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -149,6 +159,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
+                    ),
+                    labelStyle: TextStyle(
+                      fontVariations: <FontVariation>[
+                        FontVariation('wght', 700)
+                      ],
                     ),
                     fillColor:
                         Theme.of(context).colorScheme.secondary.withAlpha(100),

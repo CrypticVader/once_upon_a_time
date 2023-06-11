@@ -48,9 +48,7 @@ class FirestoreService {
         'Language': FieldValue.arrayUnion([]),
       });
       await scores.doc(userId).update({'score': FieldValue.increment(0)});
-      await progress
-          .doc(userId)
-          .update({'progress': FieldValue.increment(0)});
+      await progress.doc(userId).update({'progress': FieldValue.increment(0)});
     } catch (e) {
       await courses.doc(userId).set({
         'Maths': [],
@@ -109,5 +107,28 @@ class FirestoreService {
       'progress': progress,
       'score': score,
     };
+  }
+
+  Future<Map> get getMainViewData async {
+    await AppPreferenceService().initPrefs();
+    final score = await getUserScore;
+    final courses = await FirestoreService().getActiveUserCourses();
+    return {
+      'courses': courses,
+      'score': score,
+    };
+  }
+
+  Future<List<List<String>>> get getLeaderboardViewData async {
+    final usersStream = scores.snapshots();
+    final users = await usersStream
+        .map(
+          (event) => event.docs.map(
+            (doc) => [doc.id.toString(), (doc.data()['score'] as int).toString()],
+          ),
+        )
+        .first;
+    print(users.toList());
+    return users.toList();
   }
 }

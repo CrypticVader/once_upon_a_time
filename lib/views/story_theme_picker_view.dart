@@ -36,12 +36,13 @@ class _StoryThemePickerViewState extends State<StoryThemePickerView> {
       theme: storyTheme,
     );
 
-    Navigator.of(context).push(
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (_) {
           return const MainView();
         },
       ),
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -49,24 +50,37 @@ class _StoryThemePickerViewState extends State<StoryThemePickerView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lets pick a theme'),
+        title: const Text(
+          'Lets pick a theme',
+          style: TextStyle(
+            fontVariations: <FontVariation>[FontVariation('wght', 400)],
+          ),
+        ),
       ),
       body: ListView.separated(
         itemCount: 4,
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
+            contentPadding: EdgeInsets.fromLTRB(20, 16, 20, 0),
             onTap: () => onSelectStoryTheme(storyTheme: themeNameList[index]),
             tileColor: Theme.of(context).colorScheme.surfaceVariant,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32),
             ),
-            title: Image.asset(themeArtList[index]),
-            subtitle: Text(
-              themeNameList[index],
-              style: const TextStyle(
-                fontSize: 32,
-                fontVariations: <FontVariation>[FontVariation('wght', 700)],
+            title: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: Image.asset(themeArtList[index]),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+              child: Text(
+                themeNameList[index],
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontVariations: <FontVariation>[FontVariation('wght', 700)],
+                ),
               ),
             ),
           );
