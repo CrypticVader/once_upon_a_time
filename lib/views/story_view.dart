@@ -105,15 +105,12 @@ class _StoryViewState extends State<StoryView> {
                                   if (submittedAnswer == correctAnswer) {
                                     answerFieldController.text = '';
                                     if (storyProgress <= storyLength) {
-                                      setState(
-                                        () async {
                                           await FirestoreService()
                                               .setProgress(++storyProgress);
                                           await FirestoreService()
                                               .incrementScoreBy(5);
                                           setState(() {});
-                                        },
-                                      );
+
                                       if (mathsFantasyStory[storyProgress][0] ==
                                           'story') {}
                                     }

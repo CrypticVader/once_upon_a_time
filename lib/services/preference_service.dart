@@ -1,12 +1,13 @@
-import 'dart:developer';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppPreferenceService {
-  late SharedPreferences _prefs;
+  SharedPreferences? _prefs;
 
   Future<void> initPrefs() async {
-    _prefs = await SharedPreferences.getInstance();
+    _prefs ??= await SharedPreferences.getInstance();
+    //workaround test to avoid nullPtrExn
+    await Future.delayed(const Duration(milliseconds: 500));
+    return;
   }
 
   static final _shared = AppPreferenceService._sharedInstance();
@@ -18,32 +19,20 @@ class AppPreferenceService {
   factory AppPreferenceService() => _shared;
 
   Future<void> setUserId({required String userId}) async {
-    final couldSet = await _prefs.setString('userId', userId);
+    final couldSet = await _prefs!.setString('userId', userId);
     if (!couldSet) {
       throw CouldNotSetPreferenceException();
     }
   }
 
   String getUserId() {
-    final String value = _prefs.get('userId') as String;
+    final String value = _prefs!.get('userId') as String;
     return value;
   }
 
   bool get userNull {
-    final value = _prefs.get('userId');
+    final value = _prefs!.get('userId');
     return value == null ? true : false;
-  }
-
-  Future<void> setUserAvatar({required String assetName}) async {
-    final couldSet = await _prefs.setString('userAvatar', assetName);
-    if (!couldSet) {
-      throw CouldNotSetPreferenceException();
-    }
-  }
-
-  String getUserAvatar() {
-    final String value = _prefs.get('userAvatar') as String;
-    return value;
   }
 }
 

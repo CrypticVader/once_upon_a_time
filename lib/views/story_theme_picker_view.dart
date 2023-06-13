@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:once_upon_a_time/services/firestore_service.dart';
-import 'package:once_upon_a_time/views/main_view.dart';
+import 'package:once_upon_a_time/views/dashboard_view.dart';
 
 class StoryThemePickerView extends StatefulWidget {
   const StoryThemePickerView({
@@ -39,7 +39,7 @@ class _StoryThemePickerViewState extends State<StoryThemePickerView> {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (_) {
-          return const MainView();
+          return const DashboardView();
         },
       ),
       (Route<dynamic> route) => false,

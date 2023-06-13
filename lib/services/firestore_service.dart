@@ -12,20 +12,20 @@ class FirestoreService {
 
   String get userId => AppPreferenceService().getUserId();
 
-  CollectionReference<Map<String, dynamic>> get courses {
-    return FirebaseFirestore.instance.collection('userCourses');
-  }
+  CollectionReference<Map<String, dynamic>> get avatars =>
+      FirebaseFirestore.instance.collection('userAvatars');
 
-  CollectionReference<Map<String, dynamic>> get scores {
-    return FirebaseFirestore.instance.collection('userScores');
-  }
+  CollectionReference<Map<String, dynamic>> get courses =>
+      FirebaseFirestore.instance.collection('userCourses');
 
-  CollectionReference<Map<String, dynamic>> get progress {
-    return FirebaseFirestore.instance.collection('userProgress');
-  }
+  CollectionReference<Map<String, dynamic>> get scores =>
+      FirebaseFirestore.instance.collection('userScores');
+
+  CollectionReference<Map<String, dynamic>> get progress =>
+      FirebaseFirestore.instance.collection('userProgress');
 
   Future<void> initialize() async {
-    Firebase.initializeApp(
+    await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
@@ -39,7 +39,7 @@ class FirestoreService {
     });
   }
 
-  Future<void> initCourseDoc() async {
+  Future<void> initUser() async {
     try {
       await courses.doc(userId).update({
         'Maths': FieldValue.arrayUnion([]),
@@ -47,8 +47,15 @@ class FirestoreService {
         'Science': FieldValue.arrayUnion([]),
         'Language': FieldValue.arrayUnion([]),
       });
-      await scores.doc(userId).update({'score': FieldValue.increment(0)});
-      await progress.doc(userId).update({'progress': FieldValue.increment(0)});
+      await scores.doc(userId).update({
+        'score': FieldValue.increment(0),
+      });
+      await progress.doc(userId).update({
+        'progress': FieldValue.increment(0),
+      });
+      await avatars.doc(userId).update({
+        'path': '',
+      });
     } catch (e) {
       await courses.doc(userId).set({
         'Maths': [],
@@ -56,12 +63,19 @@ class FirestoreService {
         'Science': [],
         'Language': [],
       });
-      await scores.doc(userId).set({'score': 0});
-      await progress.doc(userId).set({'progress': 1});
+      await scores.doc(userId).set({
+        'score': 0,
+      });
+      await progress.doc(userId).set({
+        'progress': 1,
+      });
+      await avatars.doc(userId).set({
+        'path': '',
+      });
     }
   }
 
-  Future<List<List<String>>> getActiveUserCourses() async {
+  Future<List<List<String>>> get getActiveUserCourses async {
     final courseSnapshot = await courses.doc(userId).get();
     final courseMap = courseSnapshot.data()!;
     List<List<String>> courseList = [];
@@ -81,17 +95,18 @@ class FirestoreService {
   }
 
   Future<void> incrementScoreBy(int value) async {
-    final currentScore = await getUserScore;
     await scores.doc(userId).update({
-      'score': currentScore + value,
+      'score': FieldValue.increment(value),
     });
   }
 
   Future<void> setProgress(value) async {
-    await progress.doc(userId).update({'progress': value});
+    await progress.doc(userId).update({
+      'progress': value,
+    });
   }
 
-  Future<int> getProgress() async {
+  Future<int> get getProgress async {
     final progressRef = await progress.doc(userId).get();
     return progressRef.data()!['progress'] as int;
   }
@@ -100,7 +115,7 @@ class FirestoreService {
     required String courseName,
     required String themeName,
   }) async {
-    final progress = await getProgress();
+    final progress = await getProgress;
     final score = await getUserScore;
 
     return {
@@ -110,25 +125,35 @@ class FirestoreService {
   }
 
   Future<Map> get getMainViewData async {
-    await AppPreferenceService().initPrefs();
     final score = await getUserScore;
-    final courses = await FirestoreService().getActiveUserCourses();
+    final courses = await getActiveUserCourses;
+    final avatar = await getAvatar;
+
     return {
       'courses': courses,
       'score': score,
+      'avatar': avatar,
     };
   }
 
-  Future<List<List<String>>> get getLeaderboardViewData async {
+  // eg. [['userName1', score1], ...]
+  Stream<Iterable<List<String>>> get getLeaderboardViewData {
     final usersStream = scores.snapshots();
-    final users = await usersStream
-        .map(
-          (event) => event.docs.map(
-            (doc) => [doc.id.toString(), (doc.data()['score'] as int).toString()],
-          ),
-        )
-        .first;
-    print(users.toList());
-    return users.toList();
+    final users = usersStream.map((event) => event.docs.map((doc) => [
+          doc.id.toString(),
+          (doc.data()['score'] as int).toString(),
+        ]));
+    return users;
+  }
+
+  Future<void> setAvatar({required String assetPath}) async {
+    await avatars.doc(userId).set({
+      'path': assetPath,
+    });
+  }
+
+  Future<String> get getAvatar async {
+    final progressRef = await avatars.doc(userId).get();
+    return progressRef.data()!['path'] as String;
   }
 }

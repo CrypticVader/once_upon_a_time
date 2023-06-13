@@ -14,16 +14,15 @@ class _LeaderboardViewState extends State<LeaderboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: FirestoreService().getLeaderboardViewData,
+      body: StreamBuilder(
+        stream: FirestoreService().getLeaderboardViewData,
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
             case ConnectionState.done:
             case ConnectionState.active:
               if (snapshot.hasData) {
-                final leaderboardData = snapshot.data!;
-                // return Text(leaderboardData.toString());
+                final leaderboardData = snapshot.data!.toList();
                 return ListView.separated(
                   itemBuilder: (context, index) {
                     return ListTile(

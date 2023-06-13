@@ -7,14 +7,14 @@ import 'package:once_upon_a_time/views/course_picker_view.dart';
 import 'package:once_upon_a_time/views/leaderboard_view.dart';
 import 'package:once_upon_a_time/views/story_view.dart';
 
-class MainView extends StatefulWidget {
-  const MainView({super.key});
+class DashboardView extends StatefulWidget {
+  const DashboardView({super.key});
 
   @override
-  State<MainView> createState() => _MainViewState();
+  State<DashboardView> createState() => _DashboardViewState();
 }
 
-class _MainViewState extends State<MainView> {
+class _DashboardViewState extends State<DashboardView> {
   final String? userId = AppPreferenceService().getUserId();
   int _selectedIndex = 0;
 
@@ -35,17 +35,17 @@ class _MainViewState extends State<MainView> {
             if (snapshot.hasData) {
               final score = snapshot.data!['score'];
               final courseData = snapshot.data!['courses'];
+              final avatar = snapshot.data!['avatar'];
 
               return Scaffold(
                 bottomNavigationBar: BottomAppBar(
-                  shape: CircularNotchedRectangle(),
-                  child: Container(
+                  child: SizedBox(
                     height: 56.0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         IconButton(
-                          icon: Icon(Icons.book_rounded),
+                          icon: const Icon(Icons.book_rounded),
                           onPressed: () {
                             setState(() {
                               _selectedIndex = 0;
@@ -53,7 +53,7 @@ class _MainViewState extends State<MainView> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.leaderboard_rounded),
+                          icon: const Icon(Icons.leaderboard_rounded),
                           onPressed: () {
                             setState(() {
                               _selectedIndex = 1;
@@ -65,15 +65,19 @@ class _MainViewState extends State<MainView> {
                   ),
                 ),
                 appBar: AppBar(
-                  leading: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                    ),
-                    child: Image.asset(
-                      AppPreferenceService().getUserAvatar(),
-                      height: 56,
-                      width: 56,
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                      ),
+                      child: Image.asset(
+                        avatar,
+                        height: 56,
+                        width: 56,
+                      ),
                     ),
                   ),
                   title: Row(
@@ -114,32 +118,6 @@ class _MainViewState extends State<MainView> {
                       ),
                     ],
                   ),
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(56),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        elevation: 0,
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'You have been on this path for the last 7 days!',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontVariations: <FontVariation>[
-                                    FontVariation('wght', 400)
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
                 floatingActionButton: FloatingActionButton.extended(
                   onPressed: () => Navigator.of(context).push(
@@ -158,56 +136,63 @@ class _MainViewState extends State<MainView> {
                   ),
                   icon: const Icon(Icons.add_rounded),
                 ),
-                body: (_selectedIndex == 0)?Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 32.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var course in courseData)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => StoryView(
-                                      courseName: course[0],
-                                      themeName: course[1],
+                body: (_selectedIndex == 0)
+                    ? Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
+                        child: ListView(
+                          children: [
+                            for (var course in courseData)
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 12.0),
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 640),
+                                    child: ListTile(
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                                      style: ListTileStyle.list,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => StoryView(
+                                              courseName: course[0],
+                                              themeName: course[1],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      tileColor: Theme.of(context)
+                                          .colorScheme
+                                          .tertiaryContainer,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(28),
+                                      ),
+                                      title: Text(
+                                        course[0],
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontVariations: <FontVariation>[
+                                            FontVariation('wght', 600)
+                                          ],
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        course[1],
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontVariations: <FontVariation>[
+                                            FontVariation('wght', 300)
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                );
-                              },
-                              tileColor: Theme.of(context)
-                                  .colorScheme
-                                  .tertiaryContainer,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(28),
-                              ),
-                              title: Text(
-                                course[0],
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontVariations: <FontVariation>[
-                                    FontVariation('wght', 600)
-                                  ],
                                 ),
                               ),
-                              subtitle: Text(
-                                course[1],
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontVariations: <FontVariation>[
-                                    FontVariation('wght', 300)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ):LeaderboardView(),
+                          ],
+                        ),
+                      )
+                    : const LeaderboardView(),
               );
             } else {
               return const Center(

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:once_upon_a_time/services/preference_service.dart';
+import 'package:once_upon_a_time/services/firestore_service.dart';
 import 'package:once_upon_a_time/views/course_picker_view.dart';
 
 class UserAvatarPicker extends StatefulWidget {
@@ -18,7 +18,7 @@ class _UserAvatarPickerState extends State<UserAvatarPicker> {
     if (_selectedAvatarName == null) {
       return;
     } else {
-      await AppPreferenceService().setUserAvatar(assetName: assetName!);
+      await FirestoreService().setAvatar(assetPath: assetName!);
     }
 
     Navigator.of(context).push(
